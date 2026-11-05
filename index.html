@@ -1,0 +1,270 @@
+<title>CAGED Box Trainer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: a workbench. Controls on top, a full-width rosewood neck as the hero, reference cards below. */
+:root {
+  --bg: #eceef1;
+  --surface: #ffffff;
+  --surface-2: #f5f6f8;
+  --ink: #1a1e24;
+  --muted: #5b6470;
+  --line: #d3d8df;
+  --accent: #8a5a0b;
+  --accent-soft: #f4e7cf;
+  --good: #1f7a46;
+  --bad: #b3261e;
+  /* the neck stays wood in both themes */
+  --wood: #3a2317;
+  --wood-dark: #24150d;
+  --fret: #b9bec6;
+  --string: #d9ccb0;
+  --pearl: #f1ebde;
+  --note-ink: #1a120c;
+  --root: #ef5b45;
+  --sh-C: #ff7a59;
+  --sh-A: #ffc145;
+  --sh-G: #5fd08a;
+  --sh-E: #5aa9ff;
+  --sh-D: #c792ea;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14171b; --surface: #1d2127; --surface-2: #232830; --ink: #e9ebee; --muted: #9ba4af;
+    --line: #313740; --accent: #e3b053; --accent-soft: #3a2f1c; --good: #5fd08a; --bad: #ff8a80;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14171b; --surface: #1d2127; --surface-2: #232830; --ink: #e9ebee; --muted: #9ba4af;
+  --line: #313740; --accent: #e3b053; --accent-soft: #3a2f1c; --good: #5fd08a; --bad: #ff8a80;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45; }
+.app { max-width: 1320px; margin: 0 auto; padding-block: 20px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 18px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 22px; font-weight: 700; }
+h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-family: var(--font-body); }
+p { margin: 0; }
+.top { display: flex; align-items: end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.brand p { color: var(--muted); margin-top: 2px; }
+.brand .cycle { font-family: var(--font-mono); font-weight: 700; letter-spacing: 0.25em; }
+.brand .cycle b:nth-child(1) { color: var(--sh-C); } .brand .cycle b:nth-child(2) { color: var(--sh-A); }
+.brand .cycle b:nth-child(3) { color: var(--sh-G); } .brand .cycle b:nth-child(4) { color: var(--sh-E); }
+.brand .cycle b:nth-child(5) { color: var(--sh-D); }
+.brand h1 { display: flex; gap: 12px; align-items: baseline; }
+
+/* segmented controls */
+.seg { display: inline-flex; flex-wrap: wrap; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 3px; gap: 2px; }
+.seg button { font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); background: transparent; border: 0; border-radius: 6px; padding: 5px 10px; cursor: pointer; min-width: 34px; display: inline-flex; align-items: center; gap: 6px; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.15), inset 0 0 0 1px var(--line); }
+.seg.keys button { font-family: var(--font-mono); min-width: 38px; justify-content: center; }
+.tabs { font-size: 16px; }
+.tabs button { padding: 7px 18px; font-size: 15px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: end; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.group { display: grid; gap: 6px; }
+.group > .lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.checks { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; min-height: 34px; }
+.checks label { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; cursor: pointer; }
+select { font: inherit; font-size: 14px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; }
+input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px; }
+
+.neck-wrap { background: var(--wood-dark); border-radius: var(--radius); padding: 10px 12px 6px; overflow-x: auto; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.3); }
+.neck { display: block; width: 100%; min-width: 960px; height: auto; user-select: none; }
+.neck text { font-family: var(--font-mono); }
+
+.below { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 860px) { .below { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.stack { display: grid; gap: 18px; min-width: 0; }
+
+table.map { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table.map th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; padding: 0 8px 6px; }
+table.map td { padding: 8px; border-top: 1px solid var(--line); }
+table.map tr.row { cursor: pointer; }
+table.map tr.row:hover td { background: var(--surface-2); }
+table.map tr.row.on td { background: var(--accent-soft); }
+.shape-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+.mono { font-family: var(--font-mono); font-size: 13px; }
+.muted { color: var(--muted); }
+.boxnum { font-family: var(--font-display); font-weight: 800; font-size: 18px; }
+
+.btnrow { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { font: inherit; font-weight: 600; font-size: 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); border-radius: 8px; padding: 7px 12px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+kbd { font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; color: var(--muted); background: var(--surface-2); }
+
+.legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; font-size: 14px; }
+.legend div { display: flex; gap: 8px; align-items: center; }
+.legend svg { flex: none; }
+.tip { font-size: 14px; color: var(--muted); }
+.tip strong { color: var(--ink); }
+
+/* quiz */
+.quiz-head { display: flex; justify-content: space-between; align-items: start; gap: 16px; flex-wrap: wrap; }
+.score { display: flex; gap: 18px; font-variant-numeric: tabular-nums; }
+.score div { display: grid; }
+.score b { font-family: var(--font-display); font-size: 24px; line-height: 1.1; }
+.score span { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+.prompt { display: grid; gap: 4px; }
+.prompt h2 { font-size: 26px; }
+.answers { display: flex; flex-wrap: wrap; gap: 10px; }
+.answers .btn { font-size: 17px; padding: 10px 18px; min-width: 110px; justify-content: center; }
+.answers .btn.right { background: var(--good); border-color: var(--good); color: var(--surface); }
+.answers .btn.wrong { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+.feedback { font-size: 15px; min-height: 1.5em; }
+.feedback .ok { color: var(--good); font-weight: 700; }
+.feedback .no { color: var(--bad); font-weight: 700; }
+.weak { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+.footer { color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+@media (prefers-reduced-motion: no-preference) { .neck .mark { transition: opacity 120ms ease; } }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>CAGED Box Trainer <span class="cycle mono"><b>C</b><b>A</b><b>G</b><b>E</b><b>D</b></span></h1>
+      <p>Chord shapes, pentatonic boxes and arpeggios, and which ones live together on the neck.</p>
+    </div>
+    <nav class="seg tabs" id="tabs" aria-label="Mode">
+      <button type="button" data-tab="explore" aria-pressed="true">Explore</button>
+      <button type="button" data-tab="quiz" aria-pressed="false">Quiz</button>
+    </nav>
+  </header>
+
+  <section class="controls" aria-label="Key and display">
+    <div class="group"><span class="lbl">Key</span><div class="seg keys" id="keys"></div></div>
+    <div class="group"><span class="lbl">Quality</span>
+      <div class="seg" id="quality">
+        <button type="button" data-v="maj">Major</button><button type="button" data-v="min">Minor</button>
+      </div>
+    </div>
+    <div class="group" data-explore><span class="lbl">Shape</span><div class="seg" id="shapes"></div></div>
+    <div class="group" data-explore><span class="lbl">Show</span>
+      <div class="checks">
+        <label><input type="checkbox" id="lay-chord"> Chord</label>
+        <label><input type="checkbox" id="lay-pent"> Pentatonic</label>
+        <label><input type="checkbox" id="lay-arp"> Arpeggio</label>
+        <select id="arpType" aria-label="Arpeggio type"></select>
+      </div>
+    </div>
+    <div class="group" data-explore><span class="lbl">Labels</span>
+      <div class="seg" id="labels">
+        <button type="button" data-v="interval">Intervals</button><button type="button" data-v="note">Notes</button><button type="button" data-v="none">Dots</button>
+      </div>
+    </div>
+    <div class="group" data-explore><span class="lbl">Options</span>
+      <div class="checks">
+        <label><input type="checkbox" id="opt-colors"> Colour per shape</label>
+        <label><input type="checkbox" id="opt-ghost"> Faint rest of neck</label>
+      </div>
+    </div>
+    <div class="group"><span class="lbl">Major box numbers</span>
+      <select id="numbering">
+        <option value="shared">Same as minor fingering (E shape = Box 2)</option>
+        <option value="major1">Count from E shape (E shape = Box 1)</option>
+      </select>
+    </div>
+  </section>
+
+  <section id="explore" class="stack">
+    <div class="neck-wrap"><svg class="neck" id="neck" role="img" aria-label="Fretboard"></svg></div>
+    <div class="below">
+      <div class="card">
+        <div class="quiz-head">
+          <h3 id="mapTitle">Shape map</h3>
+          <span class="muted" style="font-size:13px">Click a row to focus that shape</span>
+        </div>
+        <table class="map" id="map"></table>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Hear it</h3>
+          <div class="btnrow">
+            <button class="btn" id="play-chord" type="button">Strum chord <kbd>Space</kbd></button>
+            <button class="btn" id="play-arp" type="button">Play arpeggio <kbd>R</kbd></button>
+            <button class="btn" id="play-box" type="button">Play box <kbd>B</kbd></button>
+          </div>
+          <p class="tip" id="playHint"></p>
+          <div class="btnrow">
+            <button class="btn" id="prev" type="button">← Down the neck</button>
+            <button class="btn" id="next" type="button">Up the neck →</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Reading the neck</h3>
+          <div class="legend" id="legend"></div>
+          <p class="tip" id="shapeTip"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="stack" hidden>
+    <div class="card">
+      <div class="quiz-head">
+        <div class="checks" id="qtypes"></div>
+        <div class="score">
+          <div><b id="sRight">0</b><span>Correct</span></div>
+          <div><b id="sTotal">0</b><span>Asked</span></div>
+          <div><b id="sStreak">0</b><span>Streak</span></div>
+          <div><b id="sBest">0</b><span>Best</span></div>
+        </div>
+      </div>
+      <div class="checks">
+        <span class="muted">Quiz on</span>
+        <div class="seg" id="quizQ">
+          <button type="button" data-v="maj">Major</button><button type="button" data-v="min">Minor</button><button type="button" data-v="both">Both</button>
+        </div>
+        <span class="muted">in</span>
+        <div class="seg" id="quizKeys">
+          <button type="button" data-v="all">All 12 keys</button><button type="button" data-v="natural">Natural keys</button><button type="button" data-v="current">Selected key</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="prompt"><h2 id="qPrompt"></h2><p class="muted" id="qSub"></p></div>
+      <div class="neck-wrap"><svg class="neck" id="qneck" role="img" aria-label="Quiz fretboard"></svg></div>
+      <div class="answers" id="qAnswers"></div>
+      <div class="feedback" id="qFeedback" aria-live="polite"></div>
+      <div class="btnrow">
+        <button class="btn" id="qCheck" type="button" hidden>Check <kbd>Enter</kbd></button>
+        <button class="btn" id="qClear" type="button" hidden>Clear</button>
+        <button class="btn primary" id="qNext" type="button">Next question <kbd>Enter</kbd></button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="quiz-head"><h3>Needs work</h3><button class="btn" id="qReset" type="button">Reset progress</button></div>
+      <p class="tip">Questions you miss come back more often. Progress is saved in this browser.</p>
+      <ol class="weak" id="qWeak"></ol>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span><kbd>←</kbd> <kbd>→</kbd> move along the CAGED cycle</span>
+    <span><kbd>C</kbd> <kbd>A</kbd> <kbd>G</kbd> <kbd>E</kbd> <kbd>D</kbd> pick a shape (or answer)</span>
+    <span><kbd>1</kbd>–<kbd>5</kbd> answer box questions</span>
+    <span><kbd>M</kbd> major / minor</span>
+    <span><kbd>0</kbd> all shapes</span>
+  </footer>
+</div>
+
+<script src="theory.js"></script>
+<script src="app.js"></script>
