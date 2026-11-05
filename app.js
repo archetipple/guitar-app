@@ -365,7 +365,7 @@
 
   /* ---------- audio ---------- */
   let actx = null;
-  function pluck(midi, t, vol) {
+  function pluck(midi, t, vol, dur) {
     const f = 440 * Math.pow(2, (midi - 69) / 12);
     const gain = actx.createGain();
     // bright pick attack: the filter opens wide, then settles so the tail stays clear
@@ -375,20 +375,22 @@
     const shelf = actx.createBiquadFilter(); shelf.type = 'highshelf'; shelf.frequency.value = 3000; shelf.gain.value = 5;
     gain.gain.setValueAtTime(0.0001, t);
     gain.gain.exponentialRampToValueAtTime(vol, t + 0.004);
-    gain.gain.exponentialRampToValueAtTime(0.0008, t + 1.8);
+    // quick decay, then a short release so each note stops cleanly
+    gain.gain.exponentialRampToValueAtTime(vol * 0.35, t + 0.12);
+    gain.gain.exponentialRampToValueAtTime(0.0008, t + dur);
     [['sawtooth', 1, 0.45], ['triangle', 1, 0.7], ['sine', 2, 0.3], ['sine', 3, 0.12]].forEach(([type, mult, amp]) => {
       const o = actx.createOscillator(); o.type = type; o.frequency.value = f * mult;
       const g = actx.createGain(); g.gain.value = amp;
-      o.connect(g); g.connect(lp); o.start(t); o.stop(t + 1.9);
+      o.connect(g); g.connect(lp); o.start(t); o.stop(t + dur + 0.05);
     });
     lp.connect(shelf); shelf.connect(gain); gain.connect(actx.destination);
   }
-  function playSeq(midis, stepSec, vol) {
+  function playSeq(midis, stepSec, vol, dur) {
     try {
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
       actx.resume();
       const t0 = actx.currentTime + 0.05;
-      midis.forEach((m, i) => pluck(m, t0 + i * stepSec, vol));
+      midis.forEach((m, i) => pluck(m, t0 + i * stepSec, vol, dur || stepSec * 1.1));
     } catch (e) { /* audio unavailable */ }
   }
   function upDown(notes) {
@@ -397,7 +399,7 @@
   }
   function playPosition(p, what) {
     if (!p) return;
-    if (what === 'chord') playSeq([...p.chord].sort((a, b) => a.s - b.s).map((n) => n.midi), 0.04, 0.16);
+    if (what === 'chord') playSeq([...p.chord].sort((a, b) => a.s - b.s).map((n) => n.midi), 0.035, 0.16, 1.1);
     if (what === 'arp') playSeq(upDown(p.arp), 0.17, 0.22);
     if (what === 'box') playSeq(upDown(p.box), 0.15, 0.22);
   }
