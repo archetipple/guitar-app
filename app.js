@@ -238,10 +238,10 @@
     const kn = T.keyName(state.key, state.q);
     $('mapTitle').textContent = `Shape map · ${kn} ${QNAME[state.q]}`;
     const all = T.allPositions(state.key, state.q, state.arpType);
-    let html = '<tr><th>Chord shape</th><th>Pentatonic</th><th>Frets in this key</th><th>Chord tones</th></tr>';
+    let html = '<tr><th>Shape</th><th>Pentatonic</th><th>Frets</th><th>Tones</th></tr>';
     T.SHAPES.forEach((sh) => {
       const ps = all.filter((p) => p.shape === sh);
-      const frets = ps.map((p) => `${p.lo}–${p.hi}`).join(', ');
+      const frets = ps.map((p) => `${p.lo}–${p.hi}`).join(' · ');
       const tones = CHORD_IV[state.q].map((iv) => T.noteName(state.key + iv, state.key, state.q)).join(' ');
       html += `<tr class="row${state.shape === sh ? ' on' : ''}" data-shape="${sh}">
         <td><span class="shape-name"><span class="dot" style="background:${shapeColor(sh)}"></span>${sh} shape</span></td>

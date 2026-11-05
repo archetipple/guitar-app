@@ -111,10 +111,10 @@ kbd { font-family: var(--font-mono); font-size: 10px; border: 1px solid var(--li
 .keyhint { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 14px; }
 
 .neck-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px 4px; overflow-x: auto; }
-.neck { display: block; width: 100%; min-width: 900px; height: auto; max-height: 44vh; user-select: none; }
+.neck { display: block; width: 100%; min-width: 900px; height: auto; max-height: 41vh; user-select: none; }
 .neck text { font-family: var(--font-mono); }
 
-.below { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+.below { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
 @media (max-width: 1100px) { .below { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .below > :first-child { grid-column: 1 / -1; } }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
 .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
@@ -122,7 +122,8 @@ kbd { font-family: var(--font-mono); font-size: 10px; border: 1px solid var(--li
 
 table.map { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 table.map th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 600; padding: 0 8px 6px; }
-table.map td { padding: 6px 8px; border-top: 1px solid var(--line); }
+table.map td { padding: 6px 8px; border-top: 1px solid var(--line); white-space: nowrap; }
+table.map th { white-space: nowrap; }
 table.map tr.row { cursor: pointer; }
 table.map tr.row:hover td { background: var(--sunken); }
 table.map tr.row.on td { background: var(--accent-soft); }
@@ -251,11 +252,11 @@ table.map tr.row.on td { background: var(--accent-soft); }
             <button class="btn" id="prev" type="button">← Down the neck</button>
             <button class="btn" id="next" type="button">Up the neck →</button>
           </div>
-          <p class="tip" id="shapeTip"></p>
         </div>
         <div class="panel">
           <span class="lbl">Reading the neck</span>
           <div class="legend" id="legend"></div>
+          <p class="tip" id="shapeTip"></p>
         </div>
       </div>
     </section>
