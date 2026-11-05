@@ -264,7 +264,7 @@
 
   function legendIcon(kind) {
     const s = document.createElementNS(SVGNS, 'svg');
-    s.setAttribute('width', 28); s.setAttribute('height', 28); s.setAttribute('viewBox', '0 0 28 28');
+    s.setAttribute('width', 22); s.setAttribute('height', 22); s.setAttribute('viewBox', '0 0 28 28');
     const C = palette();
     el('rect', { x: 0.5, y: 0.5, width: 27, height: 27, rx: 5, fill: C.neck, stroke: C.neckEdge }, s);
     if (kind === 'root') el('rect', { x: 6, y: 6, width: 16, height: 16, rx: 4, fill: C.root }, s);
@@ -282,11 +282,11 @@
 
   function renderLegend() {
     const items = [
-      ['root', 'Square = root note'], ['chord', 'Large with rim = chord shape'],
-      ['arp', 'Solid = arpeggio note'], ['scale', 'Ring = pentatonic note'],
+      ['root', 'Square: root'], ['chord', 'Large, rimmed: chord shape'],
+      ['arp', 'Solid: arpeggio note'], ['scale', 'Ring: pentatonic note'],
     ];
-    if (state.colors) items.push(['split', 'Split colour = shared by two shapes']);
-    if (state.ghost) items.push(['ghost', 'Small dot = scale note outside the shape']);
+    if (state.colors) items.push(['split', 'Split colour: shared by two shapes']);
+    if (state.ghost) items.push(['ghost', 'Small dot: scale note outside the shape']);
     const box = $('legend'); box.textContent = '';
     items.forEach(([k, txt]) => { const d = document.createElement('div'); d.appendChild(legendIcon(k)); d.appendChild(document.createTextNode(txt)); box.appendChild(d); });
   }
@@ -352,6 +352,7 @@
     sel.innerHTML = T.arpTypesFor(state.q).map((t) => `<option value="${t}">${t === 'triad' ? (state.q === 'maj' ? 'Major triad' : 'Minor triad') : T.ARP_NAMES[t]}</option>`).join('');
     sel.value = state.arpType;
     document.querySelectorAll('[data-explore]').forEach((g) => { g.hidden = state.tab !== 'explore'; });
+    document.querySelectorAll('[data-quiz]').forEach((g) => { g.hidden = state.tab !== 'quiz'; });
     $('explore').hidden = state.tab !== 'explore';
     $('quiz').hidden = state.tab !== 'quiz';
   }

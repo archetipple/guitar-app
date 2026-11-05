@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: a quiet settings rail on the left, the neck as a fine-line drawing in the main column, reference below. */
+/* Layout: one screen. Settings rail on the left, the neck as a fine-line drawing, reference panels in a single row below. */
 :root {
   --bg: #f3f4f2;
   --surface: #fbfbfa;
@@ -65,109 +65,105 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { height: 100%; }
-body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 13.5px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
 h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 p { margin: 0; }
 button { font: inherit; color: inherit; }
 button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.shell { display: grid; grid-template-columns: 288px minmax(0, 1fr); min-height: 100%; }
-.side { background: var(--surface); border-right: 1px solid var(--line); padding-block: 32px 24px; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: 24px; display: flex; flex-direction: column; gap: 22px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-.main { padding-block: 32px 56px; padding-left: 36px; padding-right: max(36px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; align-content: start; min-width: 0; max-width: 1240px; }
+.shell { display: grid; grid-template-columns: 272px minmax(0, 1fr); min-height: 100%; }
+.side { background: var(--surface); border-right: 1px solid var(--line); padding-block: 22px 18px; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: 20px; display: flex; flex-direction: column; gap: 13px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.main { width: 100%; max-width: 1280px; margin-inline: auto; padding-block: 18px 24px; padding-left: 28px; padding-right: max(28px, env(safe-area-inset-right, 0px)); display: grid; gap: 14px; align-content: start; min-width: 0; }
 @media (max-width: 900px) {
   .shell { grid-template-columns: minmax(0, 1fr); }
   .side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); }
   .main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 }
 
-.brand h1 { font-family: var(--font-display); font-size: 34px; line-height: 1; letter-spacing: -0.01em; }
+.brand h1 { font-family: var(--font-display); font-size: 29px; line-height: 1; letter-spacing: -0.01em; }
 .brand h1 em { color: var(--muted); }
-.cycle { display: flex; gap: 10px; margin-top: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.cycle { display: flex; gap: 9px; margin-top: 8px; font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
 .cycle span { display: inline-flex; align-items: center; gap: 4px; }
 
-.field { display: grid; gap: 8px; }
-.lbl { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
-.rule { border: 0; border-top: 1px solid var(--line); margin: 0; }
+.field { display: grid; gap: 6px; }
+.lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
 
-/* segmented controls: hairline grids */
+/* segmented controls: hairline grids, one size everywhere */
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-.seg button { background: var(--surface); border: 0; padding: 6px 8px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px; white-space: nowrap; }
+.seg button { background: var(--surface); border: 0; height: 27px; padding: 0 8px; font-size: 12.5px; font-weight: 500; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px; white-space: nowrap; }
 .seg button:hover { color: var(--ink); background: var(--sunken); }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
 .seg.keys { grid-auto-flow: row; grid-template-columns: repeat(6, 1fr); }
-.seg.keys button { font-family: var(--font-mono); font-size: 12px; padding: 6px 0; }
-.seg.shapes button { font-family: var(--font-mono); font-size: 12px; padding: 6px 0; }
+.seg.keys button, .seg.shapes button { font-family: var(--font-mono); font-size: 11.5px; padding: 0; }
 .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex: none; }
 
-.checks { display: grid; gap: 7px; }
-.checks.row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.checks { display: grid; gap: 5px; }
 .checks label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--ink); }
-input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; margin: 0; }
-select { font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; width: 100%; }
+.checks .inline { display: flex; align-items: center; gap: 8px; }
+.checks .inline select { width: auto; flex: 1; min-width: 0; }
+input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; margin: 0; flex: none; }
+select { font: inherit; font-size: 12.5px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; height: 27px; padding: 0 6px; width: 100%; }
+kbd { font-family: var(--font-mono); font-size: 10px; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; color: var(--muted); background: var(--sunken); }
 
-.shortcuts { margin-top: auto; display: grid; gap: 5px; font-size: 12px; color: var(--muted); padding-top: 12px; border-top: 1px solid var(--line); }
-kbd { font-family: var(--font-mono); font-size: 10.5px; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; color: var(--muted); background: var(--sunken); }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.topbar .seg { width: 200px; }
+.keyhint { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 14px; }
 
-.mainhead { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
-.mainhead .seg { min-width: 200px; }
-.eyebrow { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
-.view-title { font-family: var(--font-display); font-size: 30px; line-height: 1.1; margin-top: 4px; }
-
-.neck-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px 8px; overflow-x: auto; }
-.neck { display: block; width: 100%; min-width: 940px; height: auto; user-select: none; }
+.neck-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px 4px; overflow-x: auto; }
+.neck { display: block; width: 100%; min-width: 900px; height: auto; max-height: 44vh; user-select: none; }
 .neck text { font-family: var(--font-mono); }
 
-.below { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 22px; align-items: start; }
-@media (max-width: 1100px) { .below { grid-template-columns: minmax(0, 1fr); } }
-.stack { display: grid; gap: 22px; min-width: 0; }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; display: grid; gap: 14px; min-width: 0; }
+.below { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+@media (max-width: 1100px) { .below { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .below > :first-child { grid-column: 1 / -1; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
 .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.panel-head .hint { font-size: 12px; color: var(--muted); }
+.panel-head .hint { font-size: 11.5px; color: var(--muted); }
 
 table.map { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-table.map th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 600; padding: 0 10px 8px; }
-table.map td { padding: 9px 10px; border-top: 1px solid var(--line); }
+table.map th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 600; padding: 0 8px 6px; }
+table.map td { padding: 6px 8px; border-top: 1px solid var(--line); }
 table.map tr.row { cursor: pointer; }
 table.map tr.row:hover td { background: var(--sunken); }
 table.map tr.row.on td { background: var(--accent-soft); }
-.shape-name { display: inline-flex; align-items: center; gap: 9px; font-weight: 500; }
-.shape-name .dot { width: 9px; height: 9px; }
-.boxnum { font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; }
-.mono { font-family: var(--font-mono); font-size: 12px; }
+.shape-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; }
+.shape-name .dot { width: 8px; height: 8px; }
+.boxnum { font-weight: 600; font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--font-mono); font-size: 11.5px; }
 .muted { color: var(--muted); }
 
-.btnrow { display: flex; flex-wrap: wrap; gap: 8px; }
-.btn { font-size: 13px; font-weight: 500; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 7px 12px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.btn { font-size: 12.5px; font-weight: 500; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; height: 29px; padding: 0 10px; cursor: pointer; display: inline-flex; gap: 7px; align-items: center; white-space: nowrap; }
 .btn:hover { background: var(--sunken); }
 .btn.primary { background: var(--ink); border-color: var(--ink); color: var(--surface); }
 .btn.primary kbd { background: transparent; color: inherit; border-color: currentColor; opacity: 0.6; }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 16px; font-size: 13px; }
-.legend div { display: flex; gap: 10px; align-items: center; }
+.legend { display: grid; gap: 6px; font-size: 12.5px; }
+.legend div { display: flex; gap: 9px; align-items: center; }
 .legend svg { flex: none; }
-.tip { font-size: 13px; color: var(--muted); max-width: 62ch; }
+.tip { font-size: 12.5px; color: var(--muted); }
 .tip strong { color: var(--ink); font-weight: 600; }
 
 /* quiz */
-.score { display: flex; gap: 28px; font-variant-numeric: tabular-nums; }
+.score { display: grid; grid-template-columns: repeat(4, auto); gap: 18px; font-variant-numeric: tabular-nums; }
 .score div { display: grid; }
-.score b { font-weight: 500; font-size: 26px; line-height: 1; letter-spacing: -0.02em; }
-.score span { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 600; margin-top: 4px; }
-.prompt { display: grid; gap: 4px; }
-.prompt h2 { font-family: var(--font-display); font-size: 28px; line-height: 1.15; }
-.answers { display: flex; flex-wrap: wrap; gap: 8px; }
-.answers .btn { font-size: 14px; padding: 9px 16px; min-width: 104px; justify-content: center; }
+.score b { font-weight: 500; font-size: 20px; line-height: 1.1; }
+.score span { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+.prompt { display: grid; gap: 2px; }
+.prompt h2 { font-family: var(--font-display); font-size: 25px; line-height: 1.15; }
+.answerbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.answers { display: flex; flex-wrap: wrap; gap: 6px; }
+.answers .btn { min-width: 86px; justify-content: center; }
 .answers .btn.right { background: var(--good); border-color: var(--good); color: var(--surface); }
 .answers .btn.wrong { background: var(--bad); border-color: var(--bad); color: var(--surface); }
 .answers .btn.right kbd, .answers .btn.wrong kbd { background: transparent; color: inherit; border-color: currentColor; }
-.feedback { font-size: 14px; min-height: 1.5em; max-width: 80ch; }
+.feedback { font-size: 13px; min-height: 1.45em; }
 .feedback .ok { color: var(--good); font-weight: 600; }
 .feedback .no { color: var(--bad); font-weight: 600; }
-.weak { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13px; }
-.quizbar { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: end; }
-.quizopts { display: grid; gap: 10px; }
-.quizopts .seg { width: max-content; max-width: 100%; }
+.weak { margin: 0; padding-left: 16px; display: grid; gap: 3px; font-size: 12px; }
+.linkbtn { border: 0; background: none; padding: 0; color: var(--muted); font-size: 11.5px; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.linkbtn:hover { color: var(--ink); }
 </style>
 
 <div class="shell">
@@ -187,47 +183,48 @@ table.map tr.row.on td { background: var(--accent-soft); }
     <div class="field"><span class="lbl">Quality</span>
       <div class="seg" id="quality"><button type="button" data-v="maj">Major</button><button type="button" data-v="min">Minor</button></div>
     </div>
+
     <div class="field" data-explore><span class="lbl">Shape</span><div class="seg shapes" id="shapes"></div></div>
-
-    <hr class="rule" data-explore>
-
     <div class="field" data-explore><span class="lbl">Show</span>
       <div class="checks">
         <label><input type="checkbox" id="lay-chord"> Chord shape</label>
         <label><input type="checkbox" id="lay-pent"> Pentatonic box</label>
-        <label><input type="checkbox" id="lay-arp"> Arpeggio</label>
-      </div>
-      <select id="arpType" aria-label="Arpeggio type"></select>
-    </div>
-    <div class="field" data-explore><span class="lbl">Labels</span>
-      <div class="seg" id="labels"><button type="button" data-v="interval">Intervals</button><button type="button" data-v="note">Notes</button><button type="button" data-v="none">Dots</button></div>
-    </div>
-    <div class="field" data-explore><span class="lbl">Display</span>
-      <div class="checks">
+        <div class="inline"><label><input type="checkbox" id="lay-arp"> Arpeggio</label><select id="arpType" aria-label="Arpeggio type"></select></div>
         <label><input type="checkbox" id="opt-colors"> Colour each shape</label>
         <label><input type="checkbox" id="opt-ghost"> Faint rest of the scale</label>
       </div>
     </div>
+    <div class="field" data-explore><span class="lbl">Labels</span>
+      <div class="seg" id="labels"><button type="button" data-v="interval">Intervals</button><button type="button" data-v="note">Notes</button><button type="button" data-v="none">Dots</button></div>
+    </div>
+
+    <div class="field" data-quiz><span class="lbl">Questions</span><div class="checks" id="qtypes"></div></div>
+    <div class="field" data-quiz><span class="lbl">Quiz on</span>
+      <div class="seg" id="quizQ"><button type="button" data-v="maj">Major</button><button type="button" data-v="min">Minor</button><button type="button" data-v="both">Both</button></div>
+      <div class="seg" id="quizKeys"><button type="button" data-v="all">All keys</button><button type="button" data-v="natural">Naturals</button><button type="button" data-v="current">This key</button></div>
+    </div>
+
     <div class="field"><span class="lbl">Major box numbers</span>
       <select id="numbering">
-        <option value="shared">Same as minor fingering (E shape = Box 2)</option>
-        <option value="major1">Count from E shape (E shape = Box 1)</option>
+        <option value="shared">Same as minor (E shape = Box 2)</option>
+        <option value="major1">From E shape (E shape = Box 1)</option>
       </select>
     </div>
 
-    <div class="shortcuts">
-      <span><kbd>←</kbd> <kbd>→</kbd> move along the cycle</span>
-      <span><kbd>C</kbd><kbd>A</kbd><kbd>G</kbd><kbd>E</kbd><kbd>D</kbd> pick or answer a shape</span>
-      <span><kbd>1</kbd>–<kbd>5</kbd> answer a box</span>
-      <span><kbd>M</kbd> major / minor · <kbd>0</kbd> all shapes</span>
+    <div class="field" data-quiz>
+      <div class="panel-head"><span class="lbl">Needs work</span><button class="linkbtn" id="qReset" type="button">Reset progress</button></div>
+      <ol class="weak" id="qWeak"></ol>
     </div>
   </aside>
 
   <main class="main">
-    <header class="mainhead">
-      <div>
-        <p class="eyebrow">Chord shapes · pentatonic boxes · arpeggios</p>
-        <h2 class="view-title">Where each shape lives on the neck</h2>
+    <header class="topbar">
+      <div class="keyhint">
+        <span><kbd>←</kbd> <kbd>→</kbd> cycle</span>
+        <span><kbd>C</kbd><kbd>A</kbd><kbd>G</kbd><kbd>E</kbd><kbd>D</kbd> shape</span>
+        <span><kbd>1</kbd>–<kbd>5</kbd> box</span>
+        <span><kbd>M</kbd> major/minor</span>
+        <span><kbd>0</kbd> all shapes</span>
       </div>
       <nav class="seg tabs" id="tabs" aria-label="Mode">
         <button type="button" data-tab="explore" aria-pressed="true">Explore</button>
@@ -235,47 +232,38 @@ table.map tr.row.on td { background: var(--accent-soft); }
       </nav>
     </header>
 
-    <section id="explore" class="stack">
+    <section id="explore" class="main-section" style="display:grid;gap:14px">
       <div class="neck-wrap"><svg class="neck" id="neck" role="img" aria-label="Fretboard"></svg></div>
       <div class="below">
         <div class="panel">
-          <div class="panel-head"><span class="lbl" id="mapTitle">Shape map</span><span class="hint">Click a row to focus that shape</span></div>
+          <div class="panel-head"><span class="lbl" id="mapTitle">Shape map</span><span class="hint">Click a row to focus it</span></div>
           <table class="map" id="map"></table>
         </div>
-        <div class="stack">
-          <div class="panel">
-            <span class="lbl">Listen</span>
-            <div class="btnrow">
-              <button class="btn" id="play-chord" type="button">Strum chord <kbd>Space</kbd></button>
-              <button class="btn" id="play-arp" type="button">Arpeggio <kbd>R</kbd></button>
-              <button class="btn" id="play-box" type="button">Box <kbd>B</kbd></button>
-            </div>
-            <p class="tip" id="playHint"></p>
-            <div class="btnrow">
-              <button class="btn" id="prev" type="button">← Down the neck</button>
-              <button class="btn" id="next" type="button">Up the neck →</button>
-            </div>
+        <div class="panel">
+          <span class="lbl">Listen</span>
+          <div class="btnrow">
+            <button class="btn" id="play-chord" type="button">Strum <kbd>Space</kbd></button>
+            <button class="btn" id="play-arp" type="button">Arpeggio <kbd>R</kbd></button>
+            <button class="btn" id="play-box" type="button">Box <kbd>B</kbd></button>
           </div>
-          <div class="panel">
-            <span class="lbl">Reading the neck</span>
-            <div class="legend" id="legend"></div>
-            <p class="tip" id="shapeTip"></p>
+          <p class="tip" id="playHint"></p>
+          <div class="btnrow">
+            <button class="btn" id="prev" type="button">← Down the neck</button>
+            <button class="btn" id="next" type="button">Up the neck →</button>
           </div>
+          <p class="tip" id="shapeTip"></p>
+        </div>
+        <div class="panel">
+          <span class="lbl">Reading the neck</span>
+          <div class="legend" id="legend"></div>
         </div>
       </div>
     </section>
 
-    <section id="quiz" class="stack" hidden>
-      <div class="panel">
-        <div class="quizbar">
-          <div class="quizopts">
-            <span class="lbl">Questions</span>
-            <div class="checks row" id="qtypes"></div>
-            <div class="checks row">
-              <div class="seg" id="quizQ"><button type="button" data-v="maj">Major</button><button type="button" data-v="min">Minor</button><button type="button" data-v="both">Both</button></div>
-              <div class="seg" id="quizKeys"><button type="button" data-v="all">All 12 keys</button><button type="button" data-v="natural">Natural keys</button><button type="button" data-v="current">Selected key</button></div>
-            </div>
-          </div>
+    <section id="quiz" hidden>
+      <div class="panel" style="gap:12px">
+        <div class="answerbar" style="align-items:start">
+          <div class="prompt"><h2 id="qPrompt"></h2><p class="muted" id="qSub"></p></div>
           <div class="score">
             <div><b id="sRight">0</b><span>Correct</span></div>
             <div><b id="sTotal">0</b><span>Asked</span></div>
@@ -283,22 +271,16 @@ table.map tr.row.on td { background: var(--accent-soft); }
             <div><b id="sBest">0</b><span>Best</span></div>
           </div>
         </div>
-      </div>
-      <div class="panel">
-        <div class="prompt"><h2 id="qPrompt"></h2><p class="muted" id="qSub"></p></div>
         <div class="neck-wrap"><svg class="neck" id="qneck" role="img" aria-label="Quiz fretboard"></svg></div>
-        <div class="answers" id="qAnswers"></div>
-        <div class="feedback" id="qFeedback" aria-live="polite"></div>
-        <div class="btnrow">
-          <button class="btn" id="qCheck" type="button" hidden>Check <kbd>Enter</kbd></button>
-          <button class="btn" id="qClear" type="button" hidden>Clear</button>
-          <button class="btn primary" id="qNext" type="button">Next question <kbd>Enter</kbd></button>
+        <div class="answerbar">
+          <div class="answers" id="qAnswers"></div>
+          <div class="btnrow">
+            <button class="btn" id="qClear" type="button" hidden>Clear</button>
+            <button class="btn" id="qCheck" type="button" hidden>Check <kbd>Enter</kbd></button>
+            <button class="btn primary" id="qNext" type="button">Next question <kbd>Enter</kbd></button>
+          </div>
         </div>
-      </div>
-      <div class="panel">
-        <div class="panel-head"><span class="lbl">Needs work</span><button class="btn" id="qReset" type="button">Reset progress</button></div>
-        <p class="tip">Questions you miss come back more often. Progress is saved in this browser.</p>
-        <ol class="weak" id="qWeak"></ol>
+        <div class="feedback" id="qFeedback" aria-live="polite"></div>
       </div>
     </section>
   </main>
