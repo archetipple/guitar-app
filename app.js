@@ -35,7 +35,7 @@
   };
 
   /* ---------- fretboard ---------- */
-  const G = { W: 1200, LEFT: 44, OPENW: 40, RIGHT: 14, LANE: 15, GAP: 31, PAD: 17 };
+  const G = { W: 1200, LEFT: 44, OPENW: 40, RIGHT: 14, LANE: 17, GAP: 34, PAD: 18 };
   G.fretW = (G.W - G.LEFT - G.OPENW - G.RIGHT) / T.FRETS;
   G.neckTop = 3 * G.LANE + 8;
   G.neckH = 5 * G.GAP + 2 * G.PAD;
@@ -73,77 +73,75 @@
     svg.setAttribute('viewBox', `0 0 ${G.W} ${G.H}`);
     svg.textContent = '';
     clipSeq = svg.id === 'neck' ? 0 : 1000;
-    const wood = css('--wood'), fret = css('--fret'), str = css('--string'), pearl = css('--pearl');
-    const noteInk = css('--note-ink'), rootRed = css('--root');
+    const C = palette();
 
     // shape spans in three lanes above the neck
     o.spans.forEach((sp) => {
       const lane = T.SHAPES.indexOf(sp.shape) % 3;
       const x1 = sp.lo === 0 ? G.LEFT + 2 : xFretLine(sp.lo - 1) + 2;
       const x2 = xFretLine(sp.hi) - 2;
-      const y = lane * G.LANE + 2;
-      const c = sp.color || pearl;
-      el('rect', { x: x1, y, width: Math.max(x2 - x1, 10), height: G.LANE - 3, rx: 3, fill: c, opacity: 0.9 }, svg);
-      const t = el('text', { x: x1 + 6, y: y + G.LANE - 6, 'font-size': 10, 'font-weight': 700, fill: noteInk }, svg);
-      t.textContent = sp.label;
+      const y = lane * G.LANE + 3;
+      el('rect', { x: x1, y, width: Math.max(x2 - x1, 10), height: G.LANE - 5, rx: 2, fill: sp.color || C.span }, svg);
+      const t = el('text', { x: x1 + 6, y: y + G.LANE - 8.5, 'font-size': 10, 'font-weight': 500, 'letter-spacing': '0.06em', fill: C.noteInk }, svg);
+      t.textContent = sp.label.toUpperCase();
     });
 
-    // wood, inlays, frets, nut, strings
-    el('rect', { x: G.LEFT, y: G.neckTop, width: G.W - G.LEFT - G.RIGHT, height: G.neckH, fill: wood, rx: 4 }, svg);
+    // neck surface, inlays, frets, nut, strings
+    el('rect', { x: G.LEFT, y: G.neckTop, width: G.W - G.LEFT - G.RIGHT, height: G.neckH, fill: C.neck, stroke: C.neckEdge, rx: 5 }, svg);
     const midY = G.neckTop + G.neckH / 2;
-    [3, 5, 7, 9, 15, 17].forEach((f) => { if (f <= T.FRETS) el('circle', { cx: xNote(f), cy: midY, r: 6, fill: pearl, opacity: 0.45 }, svg); });
-    if (T.FRETS >= 12) [-1, 1].forEach((k) => el('circle', { cx: xNote(12), cy: midY + k * G.GAP * 1.5, r: 6, fill: pearl, opacity: 0.45 }, svg));
-    for (let k = 1; k <= T.FRETS; k++) el('line', { x1: xFretLine(k), x2: xFretLine(k), y1: G.neckTop, y2: G.neckTop + G.neckH, stroke: fret, 'stroke-width': 2.5 }, svg);
-    el('rect', { x: nutX - 4, y: G.neckTop, width: 6, height: G.neckH, fill: pearl }, svg);
+    [3, 5, 7, 9, 15, 17].forEach((f) => { if (f <= T.FRETS) el('circle', { cx: xNote(f), cy: midY, r: 5, fill: C.inlay }, svg); });
+    [-1, 1].forEach((k) => el('circle', { cx: xNote(12), cy: midY + k * G.GAP * 1.5, r: 5, fill: C.inlay }, svg));
+    for (let k = 1; k <= T.FRETS; k++) el('line', { x1: xFretLine(k), x2: xFretLine(k), y1: G.neckTop + 1, y2: G.neckTop + G.neckH - 1, stroke: C.fret, 'stroke-width': 1.5 }, svg);
+    el('rect', { x: nutX - 3, y: G.neckTop, width: 4, height: G.neckH, fill: C.nut }, svg);
     for (let s = 0; s < 6; s++) {
-      el('line', { x1: G.LEFT, x2: G.W - G.RIGHT, y1: yStr(s), y2: yStr(s), stroke: str, 'stroke-width': 0.8 + (5 - s) * 0.35, opacity: 0.85 }, svg);
-      const t = el('text', { x: G.LEFT - 12, y: yStr(s) + 4, 'font-size': 12, 'text-anchor': 'middle', fill: pearl, opacity: 0.7 }, svg);
+      el('line', { x1: G.LEFT, x2: G.W - G.RIGHT, y1: yStr(s), y2: yStr(s), stroke: C.string, 'stroke-width': 0.6 + (5 - s) * 0.28 }, svg);
+      const t = el('text', { x: G.LEFT - 14, y: yStr(s) + 4, 'font-size': 11, 'text-anchor': 'middle', fill: C.label }, svg);
       t.textContent = T.STRING_NAMES[s];
     }
     for (let f = 0; f <= T.FRETS; f++) {
       const strong = [3, 5, 7, 9, 12, 15, 17].includes(f);
-      const t = el('text', { x: xNote(f), y: G.neckTop + G.neckH + 18, 'font-size': 12, 'text-anchor': 'middle', fill: pearl, opacity: strong ? 0.85 : 0.4, 'font-weight': strong ? 700 : 500 }, svg);
+      const t = el('text', { x: xNote(f), y: G.neckTop + G.neckH + 18, 'font-size': 11, 'text-anchor': 'middle', fill: strong ? C.ink : C.label, 'font-weight': strong ? 500 : 400, opacity: strong ? 0.85 : 0.7 }, svg);
       t.textContent = f;
     }
 
-    o.ghost.forEach((n) => el('circle', { cx: xNote(n.f), cy: yStr(n.s), r: n.iv === 0 ? 4.5 : 3.5, fill: n.iv === 0 ? rootRed : pearl, opacity: 0.4 }, svg));
+    o.ghost.forEach((n) => el('circle', { cx: xNote(n.f), cy: yStr(n.s), r: n.iv === 0 ? 4 : 3, fill: n.iv === 0 ? C.root : C.note, opacity: n.iv === 0 ? 0.5 : 0.28 }, svg));
 
     // note marks
     o.marks.forEach((m) => {
       const g = el('g', { class: 'mark' }, svg);
       const x = xNote(m.f), y = yStr(m.s), isRoot = m.iv === 0;
-      let textFill = noteInk;
+      const colors = m.colors.length ? m.colors : [isRoot ? C.root : C.note];
+      let textFill;
       if (m.role === 'scale') {
-        const colors = m.colors.length ? m.colors : [isRoot ? rootRed : pearl];
-        stripedShape(g, x, y, 11.5, isRoot, colors);
-        if (isRoot) el('rect', { x: x - 8.5, y: y - 8.5, width: 17, height: 17, rx: 3, fill: wood }, g);
-        else el('circle', { cx: x, cy: y, r: 8.5, fill: wood }, g);
-        textFill = pearl;
+        stripedShape(g, x, y, 11, isRoot, colors);
+        if (isRoot) el('rect', { x: x - 8.5, y: y - 8.5, width: 17, height: 17, rx: 3, fill: C.neck }, g);
+        else el('circle', { cx: x, cy: y, r: 8.5, fill: C.neck }, g);
+        textFill = C.note;
       } else {
-        const r = m.role === 'chord' ? 13 : 11.5;
-        const colors = m.colors.length ? m.colors : [isRoot ? rootRed : pearl];
-        stripedShape(g, x, y, r, isRoot, colors, m.role === 'chord' ? { stroke: pearl, 'stroke-width': 2.5 } : {});
+        const r = m.role === 'chord' ? 12.5 : 11;
+        stripedShape(g, x, y, r, isRoot, colors, m.role === 'chord' ? { stroke: C.rim, 'stroke-width': 2 } : {});
+        textFill = m.colors.length ? C.noteInk : (isRoot ? C.rootOn : C.noteOn);
       }
       if (m.text) {
-        const t = el('text', { x, y: y + 4, 'font-size': m.text.length > 2 ? 9.5 : 11, 'font-weight': 700, 'text-anchor': 'middle', fill: textFill }, g);
+        const t = el('text', { x, y: y + 3.8, 'font-size': m.text.length > 2 ? 9 : 10.5, 'font-weight': 600, 'text-anchor': 'middle', fill: textFill }, g);
         t.textContent = m.text;
       }
     });
 
     // quiz build marks
-    o.user.forEach(([s, f]) => el('circle', { cx: xNote(f), cy: yStr(s), r: 12, fill: pearl, opacity: 0.9, stroke: noteInk, 'stroke-width': 1.5 }, svg));
+    o.user.forEach(([s, f]) => el('circle', { cx: xNote(f), cy: yStr(s), r: 11.5, fill: C.note, opacity: 0.85 }, svg));
     if (o.result) {
-      const good = css('--sh-G');
       o.result.forEach((r) => {
         const x = xNote(r.f), y = yStr(r.s);
-        if (r.kind === 'ok') el('circle', { cx: x, cy: y, r: 12, fill: good, stroke: pearl, 'stroke-width': 2 }, svg);
-        if (r.kind === 'missed') el('circle', { cx: x, cy: y, r: 12, fill: 'none', stroke: rootRed, 'stroke-width': 3, 'stroke-dasharray': '4 3' }, svg);
+        let tf = C.rootOn;
+        if (r.kind === 'ok') el('circle', { cx: x, cy: y, r: 12, fill: C.ok, stroke: C.rim, 'stroke-width': 2 }, svg);
+        if (r.kind === 'missed') { el('circle', { cx: x, cy: y, r: 11, fill: C.neck, stroke: C.root, 'stroke-width': 2, 'stroke-dasharray': '3 3' }, svg); tf = C.root; }
         if (r.kind === 'extra') {
-          el('circle', { cx: x, cy: y, r: 12, fill: '#777', opacity: 0.8 }, svg);
-          el('path', { d: `M${x - 6} ${y - 6}L${x + 6} ${y + 6}M${x + 6} ${y - 6}L${x - 6} ${y + 6}`, stroke: pearl, 'stroke-width': 2.5 }, svg);
+          el('circle', { cx: x, cy: y, r: 11.5, fill: C.label }, svg);
+          el('path', { d: `M${x - 5} ${y - 5}L${x + 5} ${y + 5}M${x + 5} ${y - 5}L${x - 5} ${y + 5}`, stroke: C.neck, 'stroke-width': 2 }, svg);
         }
         if (r.text) {
-          const t = el('text', { x, y: y + 4, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: r.kind === 'missed' ? pearl : noteInk }, svg);
+          const t = el('text', { x, y: y + 3.8, 'font-size': 10.5, 'font-weight': 600, 'text-anchor': 'middle', fill: tf }, svg);
           t.textContent = r.text;
         }
       });
@@ -159,6 +157,14 @@
         }
       }
     }
+  }
+
+  function palette() {
+    return {
+      neck: css('--neck'), neckEdge: css('--neck-edge'), fret: css('--fret'), string: css('--string'), inlay: css('--inlay'),
+      nut: css('--nut'), label: css('--neck-label'), ink: css('--ink'), note: css('--note'), noteOn: css('--note-on'),
+      noteInk: css('--note-ink'), rim: css('--rim'), root: css('--root'), rootOn: css('--root-on'), ok: css('--ok'), span: css('--span'),
+    };
   }
 
   /* ---------- helpers ---------- */
@@ -195,8 +201,8 @@
   function spansFor(list, opt) {
     return list.map((p) => ({
       shape: p.shape, lo: p.lo, hi: p.hi,
-      color: opt.colors ? shapeColor(p.shape) : css('--pearl'),
-      label: `${p.shape} shape${opt.pent ? ' · ' + boxText(p.boxN, p.q) : ''}`,
+      color: opt.colors ? shapeColor(p.shape) : css('--span'),
+      label: `${p.shape} shape${opt.pent ? '  ·  ' + boxText(p.boxN, p.q) : ''}`,
     }));
   }
 
@@ -258,20 +264,19 @@
 
   function legendIcon(kind) {
     const s = document.createElementNS(SVGNS, 'svg');
-    s.setAttribute('width', 30); s.setAttribute('height', 30); s.setAttribute('viewBox', '0 0 30 30');
-    const wood = css('--wood'), pearl = css('--pearl');
-    el('rect', { width: 30, height: 30, rx: 6, fill: wood }, s);
-    if (kind === 'root') el('rect', { x: 4, y: 4, width: 22, height: 22, rx: 6, fill: css('--root') }, s);
-    if (kind === 'chord') el('circle', { cx: 15, cy: 15, r: 11, fill: pearl, stroke: pearl, 'stroke-width': 2.5 }, s);
-    if (kind === 'arp') el('circle', { cx: 15, cy: 15, r: 9.5, fill: pearl, opacity: 0.85 }, s);
-    if (kind === 'scale') { el('circle', { cx: 15, cy: 15, r: 10, fill: pearl }, s); el('circle', { cx: 15, cy: 15, r: 7, fill: wood }, s); }
+    s.setAttribute('width', 28); s.setAttribute('height', 28); s.setAttribute('viewBox', '0 0 28 28');
+    const C = palette();
+    el('rect', { x: 0.5, y: 0.5, width: 27, height: 27, rx: 5, fill: C.neck, stroke: C.neckEdge }, s);
+    if (kind === 'root') el('rect', { x: 6, y: 6, width: 16, height: 16, rx: 4, fill: C.root }, s);
+    if (kind === 'chord') el('circle', { cx: 14, cy: 14, r: 9, fill: C.note, stroke: C.rim, 'stroke-width': 2 }, s);
+    if (kind === 'arp') el('circle', { cx: 14, cy: 14, r: 7.5, fill: C.note }, s);
+    if (kind === 'scale') el('circle', { cx: 14, cy: 14, r: 7.5, fill: 'none', stroke: C.note, 'stroke-width': 2.5 }, s);
     if (kind === 'split') {
-      const id = 'lg-split';
-      const c = el('clipPath', { id }, s); el('circle', { cx: 15, cy: 15, r: 11 }, c);
-      el('rect', { x: 4, y: 4, width: 11, height: 22, fill: css('--sh-E'), 'clip-path': `url(#${id})` }, s);
-      el('rect', { x: 15, y: 4, width: 11, height: 22, fill: css('--sh-D'), 'clip-path': `url(#${id})` }, s);
+      const c = el('clipPath', { id: 'lg-split' }, s); el('circle', { cx: 14, cy: 14, r: 9 }, c);
+      el('rect', { x: 5, y: 5, width: 9, height: 18, fill: shapeColor('E'), 'clip-path': 'url(#lg-split)' }, s);
+      el('rect', { x: 14, y: 5, width: 9, height: 18, fill: shapeColor('D'), 'clip-path': 'url(#lg-split)' }, s);
     }
-    if (kind === 'ghost') el('circle', { cx: 15, cy: 15, r: 4, fill: pearl, opacity: 0.5 }, s);
+    if (kind === 'ghost') el('circle', { cx: 14, cy: 14, r: 3.5, fill: C.note, opacity: 0.3 }, s);
     return s;
   }
 
@@ -670,6 +675,9 @@
       if (hit) answer(hit.v);
     }
   });
+
+  try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { renderAll(); if (state.tab === 'quiz') renderQuiz(); }); } catch (e) { /* older browsers */ }
+  new MutationObserver(() => { renderAll(); if (state.tab === 'quiz') renderQuiz(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   buildControls();
   bindQuiz();
