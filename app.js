@@ -91,8 +91,8 @@
     // wood, inlays, frets, nut, strings
     el('rect', { x: G.LEFT, y: G.neckTop, width: G.W - G.LEFT - G.RIGHT, height: G.neckH, fill: wood, rx: 4 }, svg);
     const midY = G.neckTop + G.neckH / 2;
-    [3, 5, 7, 9, 15, 17].forEach((f) => { if (f <= T.FRETS) el('circle', { cx: xNote(f), cy: midY, r: 6, fill: pearl, opacity: 0.22 }, svg); });
-    if (T.FRETS >= 12) [-1, 1].forEach((k) => el('circle', { cx: xNote(12), cy: midY + k * G.GAP * 1.5, r: 6, fill: pearl, opacity: 0.22 }, svg));
+    [3, 5, 7, 9, 15, 17].forEach((f) => { if (f <= T.FRETS) el('circle', { cx: xNote(f), cy: midY, r: 6, fill: pearl, opacity: 0.45 }, svg); });
+    if (T.FRETS >= 12) [-1, 1].forEach((k) => el('circle', { cx: xNote(12), cy: midY + k * G.GAP * 1.5, r: 6, fill: pearl, opacity: 0.45 }, svg));
     for (let k = 1; k <= T.FRETS; k++) el('line', { x1: xFretLine(k), x2: xFretLine(k), y1: G.neckTop, y2: G.neckTop + G.neckH, stroke: fret, 'stroke-width': 2.5 }, svg);
     el('rect', { x: nutX - 4, y: G.neckTop, width: 6, height: G.neckH, fill: pearl }, svg);
     for (let s = 0; s < 6; s++) {
@@ -368,16 +368,20 @@
   function pluck(midi, t, vol) {
     const f = 440 * Math.pow(2, (midi - 69) / 12);
     const gain = actx.createGain();
-    const lp = actx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600;
+    // bright pick attack: the filter opens wide, then settles so the tail stays clear
+    const lp = actx.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 1.2;
+    lp.frequency.setValueAtTime(9000, t);
+    lp.frequency.exponentialRampToValueAtTime(3800, t + 0.35);
+    const shelf = actx.createBiquadFilter(); shelf.type = 'highshelf'; shelf.frequency.value = 3000; shelf.gain.value = 5;
     gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.exponentialRampToValueAtTime(vol, t + 0.006);
+    gain.gain.exponentialRampToValueAtTime(vol, t + 0.004);
     gain.gain.exponentialRampToValueAtTime(0.0008, t + 1.8);
-    [['triangle', 1, 1], ['sine', 2, 0.35]].forEach(([type, mult, amp]) => {
+    [['sawtooth', 1, 0.45], ['triangle', 1, 0.7], ['sine', 2, 0.3], ['sine', 3, 0.12]].forEach(([type, mult, amp]) => {
       const o = actx.createOscillator(); o.type = type; o.frequency.value = f * mult;
       const g = actx.createGain(); g.gain.value = amp;
       o.connect(g); g.connect(lp); o.start(t); o.stop(t + 1.9);
     });
-    lp.connect(gain); gain.connect(actx.destination);
+    lp.connect(shelf); shelf.connect(gain); gain.connect(actx.destination);
   }
   function playSeq(midis, stepSec, vol) {
     try {
